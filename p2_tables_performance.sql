@@ -57,8 +57,8 @@ CREATE SCHEMA metric_history;
 GRANT USAGE ON SCHEMA metric TO performance_reader_metric;
 GRANT USAGE ON SCHEMA metric TO performance_writer_metric;
 
-ALTER DEFAULT PRIVILEGES IN SCHEMA performance GRANT SELECT ON TABLES TO performance_reader_metric; 
-ALTER DEFAULT PRIVILEGES IN SCHEMA performance GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO performance_writer_metric; 
+ALTER DEFAULT PRIVILEGES IN SCHEMA metric GRANT SELECT ON TABLES TO performance_reader_metric; 
+ALTER DEFAULT PRIVILEGES IN SCHEMA metric GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO performance_writer_metric; 
 
 
 --
