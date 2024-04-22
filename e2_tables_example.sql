@@ -345,9 +345,9 @@ SELECT  X.date_value
   || RIGHT('0' || X.day_number::text, 2) || ', ' 
   || X.year_number 
     AS  display_string 
--- 
+--
 FROM  reference.calendar_date  AS  X 
--- 
+--
 JOIN  reference."month"  AS  M  ON  X.month_number = M.order_number 
 JOIN  reference.weekday  AS  W  ON  X.days_after_sunday = W.days_after_sunday 
 -- 
