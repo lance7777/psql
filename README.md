@@ -5,7 +5,9 @@ CONTENT:
 
 e1_create_database_example.sql :: commands to create a database called "example"
 
-e2_tables_example.sql :: a simple table to demonstrate code style
+e2_tables_example.sql :: simple tables to demonstrate code style
+
+e3_functions_example.sql :: a basic function and procedure
 
 p1_create_database_performance.sql :: commands to create a "performance" monitoring database
 
