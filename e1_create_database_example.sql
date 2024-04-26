@@ -62,17 +62,9 @@ ALTER DATABASE example SET search_path = reference, "utility";
 
 /*
 
-SELECT X.oid 
- , X.datname 
- , X.datdba 
- , pg_catalog.pg_get_userbyid(X.datdba) AS datdba_name 
-FROM pg_catalog.pg_database AS X 
-ORDER BY X.oid ASC 
---
-; 
+\l+
 
-SELECT * 
-FROM information_schema.schemata; 
+\dn
 
 */
 
