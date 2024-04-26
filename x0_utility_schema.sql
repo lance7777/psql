@@ -134,7 +134,7 @@ BEGIN
   IF ( v_triggering_action_code IN ( 'U' , 'D' , 'T' ) ) THEN 
 
     IF OLD IS DISTINCT FROM NULL THEN 
-	   
+       
       v_history_insertion_sql = concat( format( 'INSERT INTO %I.%I ' 
                                               , TG_TABLE_SCHEMA || v_history_schema_suffix 
                                               , TG_TABLE_NAME )
@@ -157,7 +157,7 @@ BEGIN
 EXCEPTION
   WHEN OTHERS THEN
     RAISE WARNING 'Error ignored in triggered historical record-auditing function: %', TG_NAME;
-	RETURN NEW;
+    RETURN NEW;
 
 END main_block;
 $main_def$ LANGUAGE plpgsql 
@@ -206,7 +206,7 @@ BEGIN
 EXCEPTION
   WHEN OTHERS THEN 
     RAISE WARNING 'Error ignored in triggered historical record-auditing function: %', TG_NAME;
-	RETURN NEW;
+    RETURN NEW;
 
 END main_block;
 $main_def$ LANGUAGE plpgsql 
@@ -277,7 +277,7 @@ BEGIN
 EXCEPTION 
   WHEN OTHERS THEN 
     RAISE WARNING 'Error ignored in triggered historical record-auditing function: %', TG_NAME;
-	RETURN OLD;
+    RETURN OLD;
 
 END main_block;
 $main_def$ LANGUAGE plpgsql 
@@ -341,7 +341,7 @@ BEGIN
 
     v_raise_message := utility.fcn_console_message('START :: utility.prc_generate_history_table');  
     RAISE NOTICE '%' , v_raise_message;
-	
+    
     v_raise_message := utility.fcn_console_message('Current Database = ' || format('%I',coalesce(v_current_database,'<<NULL>>')) );  
     RAISE NOTICE '%' , v_raise_message;
     v_raise_message := utility.fcn_console_message('Input/Target Table Schema = ' || format('%I',coalesce(p_target_table_schema,'<<NULL>>')) );  
@@ -349,48 +349,48 @@ BEGIN
     v_raise_message := utility.fcn_console_message('Input/Target Table Name = ' || format('%I',coalesce(p_target_table_name,'<<NULL>>')) );  
     RAISE NOTICE '%' , v_raise_message;
 
-	--
-	--  Check input parameters ... 
-	--
+    --
+    --  Check input parameters ... 
+    --
 
     IF p_target_table_schema IS NULL THEN 
-	
+    
       v_raise_message := utility.fcn_console_message('Input parameter "p_target_table_schema" is NULL.');
       RAISE NOTICE '%' , v_raise_message;
-	  
+      
       v_raise_message := 'A non-null value must be provided for input parameter "p_target_table_schema".';
       RAISE EXCEPTION '%' , v_raise_message;
-	  
+      
     END IF; 
-	
+    
     IF p_target_table_name IS NULL THEN 
-	
+    
       v_raise_message := utility.fcn_console_message('Input parameter "p_target_table_name" is NULL.');
       RAISE NOTICE '%' , v_raise_message;
-	  
+      
       v_raise_message := 'A non-null value must be provided for input parameter "p_target_table_name".';
       RAISE EXCEPTION '%' , v_raise_message;
-	  
+      
     END IF; 
 
 
     IF RIGHT(p_target_table_schema,char_length(v_history_schema_suffix)) = v_history_schema_suffix THEN 
-	
+    
       v_raise_message := 'The target schema has a special/reserved/forbidden suffix: ' || format('%I',v_history_schema_suffix);
       RAISE EXCEPTION '%' , v_raise_message;
-	  
+      
     END IF; 
 
-	--
-	--  Validate request ... 
-	--
-	
+    --
+    --  Validate request ... 
+    --
+    
     v_raise_message := utility.fcn_console_message( format( 'Check that the requested/target table exists: "%I"."%I"."%I".' 
                                                           , v_current_database
                                                           , p_target_table_schema 
                                                           , p_target_table_name ) );  
     RAISE NOTICE '%' , v_raise_message; 
-	
+    
     IF NOT( EXISTS( SELECT null 
                     FROM information_schema.tables AS X 
                     WHERE X.table_catalog = v_current_database 
@@ -398,31 +398,31 @@ BEGIN
                     AND X.table_name = p_target_table_name 
                     AND upper(X.table_type) = v_table_type_expected ) ) 
     THEN 
-	
+    
       v_raise_message := format( 'No table %I in schema %I exists in current database (%I).' 
                                , p_target_table_name 
                                , p_target_table_schema 
                                , v_current_database );
       RAISE EXCEPTION '%' , v_raise_message;
-	
+    
     END IF; 
 
-	
+    
     v_raise_message := utility.fcn_console_message( format( 'Check that a "history" schema exists, for new companion table: "%I".' 
                                                           , concat(p_target_table_schema,v_history_schema_suffix) ) );
     RAISE NOTICE '%' , v_raise_message;
-	
+    
     IF NOT( EXISTS ( SELECT null 
                      FROM information_schema.schemata AS X 
                      WHERE X.catalog_name = v_current_database 
                      AND X.schema_name = concat(p_target_table_schema,v_history_schema_suffix) ) ) 
     THEN 
-	
+    
       v_raise_message := format( 'No schema %I exists in in current database (%I).' 
                                , concat(p_target_table_schema,v_history_schema_suffix)
                                , v_current_database );
       RAISE EXCEPTION '%' , v_raise_message;
-	
+    
     END IF; 
 
 
@@ -430,7 +430,7 @@ BEGIN
                                                           , concat(p_target_table_schema,v_history_schema_suffix)
                                                           , p_target_table_name ) );
     RAISE NOTICE '%' , v_raise_message;
-	
+    
     IF EXISTS( SELECT null 
                FROM information_schema.tables AS X 
                WHERE X.table_catalog = v_current_database 
@@ -489,15 +489,15 @@ BEGIN
                     AND X.column_name = 'update_by' 
                     AND X.column_default ilike '%session%user%' ) ) 
     THEN
-	
+    
       v_raise_message := 'Either "update_time" or "update_by" does not exist (with expected DEFAULT expression) in the target table''s column list.';
       RAISE EXCEPTION '%' , v_raise_message;
-	
+    
     END IF;
 
-	--
-	--  Perform request ... 
-	--
+    --
+    --  Perform request ... 
+    --
 
     <<create_history_table>> 
     DECLARE
@@ -519,10 +519,10 @@ BEGIN
                                AND X.table_name = p_target_table_name );
 
 
-    	v_create_table_sql := concat( format( 'CREATE TABLE %I.%I ( ' 
+        v_create_table_sql := concat( format( 'CREATE TABLE %I.%I ( ' 
                                             , concat(p_target_table_schema,main_block.v_history_schema_suffix) 
-											, p_target_table_name ) 
-								    , '
+                                            , p_target_table_name ) 
+                                    , '
 
   history_insert_time timestamp NOT NULL DEFAULT current_timestamp
 , history_insert_by text NOT NULL DEFAULT session_user
@@ -540,14 +540,14 @@ BEGIN
 
 ' );
 
-		
+        
         EXECUTE v_create_table_sql;
 
     --
     END create_history_table; 
     --
-	
-	
+    
+    
     <<configure_history_triggers>> 
     DECLARE
       --
@@ -580,7 +580,7 @@ BEGIN
                                                    , v_trigger_name_before_insert 
                                                    , p_target_table_schema 
                                                    , p_target_table_name ) 
-								           , '
+                                           , '
 FOR EACH ROW EXECUTE FUNCTION utility.fcn_history_trigger_before_insert();
 ' );
 
@@ -592,10 +592,10 @@ FOR EACH ROW EXECUTE FUNCTION utility.fcn_history_trigger_before_insert();
                                                    , v_trigger_name_before_update 
                                                    , p_target_table_schema 
                                                    , p_target_table_name ) 
-								           , '
+                                           , '
 FOR EACH ROW EXECUTE FUNCTION utility.fcn_history_trigger_before_update();
 ' );
-		
+        
 --
 --  BEFORE DELETE ... 
 --
@@ -604,7 +604,7 @@ FOR EACH ROW EXECUTE FUNCTION utility.fcn_history_trigger_before_update();
                                                    , v_trigger_name_before_delete 
                                                    , p_target_table_schema
                                                    , p_target_table_name )
-								           , '
+                                           , '
   FOR EACH ROW EXECUTE FUNCTION utility.fcn_history_trigger_before_delete();
   ' );
 
@@ -713,59 +713,59 @@ BEGIN
     v_raise_message := utility.fcn_console_message('History Table Name = ' || format('%I',coalesce(p_history_table_name,'<<NULL>>')) );
     RAISE NOTICE '%' , v_raise_message;
 
-	--
-	--  Check input parameters ... 
-	--
+    --
+    --  Check input parameters ... 
+    --
 
     IF p_history_table_schema IS NULL THEN 
-	
+    
       v_raise_message := utility.fcn_console_message('Input parameter "p_history_table_schema" is NULL.');
       RAISE NOTICE '%' , v_raise_message;
-	  
+      
       v_raise_message := 'A non-null value must be provided for input parameter "p_history_table_schema".';
       RAISE EXCEPTION '%' , v_raise_message;
-	  
+      
     END IF; 
-	
+    
     IF p_history_table_name IS NULL THEN 
-	
+    
       v_raise_message := utility.fcn_console_message('Input parameter "p_history_table_name" is NULL.');
       RAISE NOTICE '%' , v_raise_message;
-	  
+      
       v_raise_message := 'A non-null value must be provided for input parameter "p_history_table_name".';
       RAISE EXCEPTION '%' , v_raise_message;
-	  
+      
     END IF; 
 
 
     IF RIGHT(p_history_table_schema,char_length(v_history_schema_suffix)) IS DISTINCT FROM v_history_schema_suffix THEN 
-	
+    
       v_raise_message := 'The provided history schema name does not have the expected suffix: ' || format('%I',v_history_schema_suffix);
       RAISE EXCEPTION '%' , v_raise_message;
-	  
+      
     END IF;
 
 
     IF ( p_days_back_to_keep IS NOT NULL AND p_days_back_to_keep < 0 ) THEN 
-	
+    
       v_raise_message := utility.fcn_console_message('Input parameter "p_days_back_to_keep" must be either NULL or non-negative.');
       RAISE NOTICE '%' , v_raise_message;
-	  
+      
       v_raise_message := 'If a non-null value is provided for input parameter "p_days_back_to_keep" then it should be non-negative.';
       RAISE EXCEPTION '%' , v_raise_message;
-	  
+      
     END IF;
 
-	--
-	--  Validate request ... 
-	--
+    --
+    --  Validate request ... 
+    --
 
     v_raise_message := utility.fcn_console_message( format( 'Check that the requested/target table exists: "%I"."%I"."%I".' 
                                                           , v_current_database 
                                                           , p_history_table_schema 
                                                           , p_history_table_name ) );
     RAISE NOTICE '%' , v_raise_message; 
-	
+    
     IF NOT( EXISTS( SELECT null 
                     FROM information_schema.tables AS X 
                     WHERE X.table_catalog = v_current_database 
@@ -773,13 +773,13 @@ BEGIN
                     AND X.table_name = p_history_table_name 
                     AND upper(X.table_type) = v_table_type_expected ) ) 
     THEN 
-	
+    
       v_raise_message := format( 'No table %I in schema %I exists in current database (%I).' 
                                , p_history_table_name 
                                , p_history_table_schema 
                                , v_current_database );  
       RAISE EXCEPTION '%' , v_raise_message;
-	
+    
     END IF;
 
 
@@ -788,7 +788,7 @@ BEGIN
                                                           , LEFT( p_history_table_schema , char_length(p_history_table_schema) - char_length(v_history_schema_suffix) ) 
                                                           , p_history_table_name ) );  
     RAISE NOTICE '%' , v_raise_message; 
-	
+    
     IF NOT( EXISTS( SELECT null 
                     FROM information_schema.tables AS X 
                     WHERE X.table_catalog = v_current_database 
@@ -796,36 +796,36 @@ BEGIN
                     AND X.table_name = p_history_table_name 
                     AND upper(X.table_type) = v_table_type_expected ) ) 
     THEN 
-	
+    
       v_raise_message := format( 'No table %I in schema %I exists in current database (%I).' 
                                , p_history_table_name 
                                , LEFT( p_history_table_schema , char_length(p_history_table_schema) - char_length(v_history_schema_suffix) )  
                                , v_current_database );  
       RAISE EXCEPTION '%' , v_raise_message;
-	
+    
     END IF;
-	
-	
+    
+    
     v_raise_message := utility.fcn_console_message('Check that "history_insert_time" exists as a column in the target table.');  
     RAISE NOTICE '%' , v_raise_message; 
-	
+    
     IF NOT( EXISTS( SELECT null 
                     FROM information_schema.columns AS X 
                     WHERE X.table_catalog = v_current_database 
                     AND X.table_schema = p_history_table_schema 
                     AND X.table_name = p_history_table_name 
-                    AND X.column_name = 'history_insert_time' 	
+                    AND X.column_name = 'history_insert_time'     
                     AND X.column_default ilike '%current%timestamp%' ) ) 
     THEN 
-	
+    
       v_raise_message := '"history_insert_time" does not exist (with expected DEFAULT expression) in the requested history table''s column list.';
       RAISE EXCEPTION '%' , v_raise_message;
-	
+    
     END IF;
 
-	--
-	--  Perform request ... 
-	--
+    --
+    --  Perform request ... 
+    --
 
         IF p_delete_records = true 
         THEN 
@@ -846,7 +846,7 @@ WHERE history_insert_time < ''' || ( v_current_timestamp - make_interval( days =
                             );
 
 
-		    EXECUTE v_action_sql;
+            EXECUTE v_action_sql;
 
 
             GET DIAGNOSTICS v_row_count = ROW_COUNT;
@@ -861,7 +861,7 @@ WHERE history_insert_time < ''' || ( v_current_timestamp - make_interval( days =
             RAISE NOTICE '%' , v_raise_message;
 
 
-    	    v_action_sql := ( SELECT format( 'SELECT COUNT(*)::bigint FROM %I.%I ' 
+            v_action_sql := ( SELECT format( 'SELECT COUNT(*)::bigint FROM %I.%I ' 
                                            , p_history_table_schema 
                                            , p_history_table_name ) 
                                 || CASE WHEN p_days_back_to_keep IS NULL 
@@ -869,11 +869,11 @@ WHERE history_insert_time < ''' || ( v_current_timestamp - make_interval( days =
                                         ELSE ' 
 WHERE history_insert_time < ''' || ( v_current_timestamp - make_interval( days => p_days_back_to_keep ) )::text || ''' ; ' 
                                    END 
-			    			);
+                            );
 
 
-		    EXECUTE v_action_sql 
-		    INTO v_row_count ; 
+            EXECUTE v_action_sql 
+            INTO v_row_count ; 
 
 
             v_raise_message := utility.fcn_console_message(' number of rows = ' || format('%s',coalesce(v_row_count::text,'<<NULL>>')) ); 
@@ -890,7 +890,7 @@ WHERE history_insert_time < ''' || ( v_current_timestamp - make_interval( days =
 
     v_raise_message := utility.fcn_console_message('END :: utility.prc_purge_history_table');
     RAISE NOTICE '%' , v_raise_message;
-	
+    
 -- 
 -- 
 END main_block;
@@ -967,7 +967,7 @@ BEGIN
 
     v_raise_message := utility.fcn_console_message('START :: utility.prc_purge_all_history_tables');
     RAISE NOTICE '%' , v_raise_message;
-	
+    
     v_raise_message := utility.fcn_console_message('Current Database = ' || format('%I',coalesce(v_current_database,'<<NULL>>')) );
     RAISE NOTICE '%' , v_raise_message;
     v_raise_message := utility.fcn_console_message('History Table Schema = ' || format('%I',coalesce(p_history_table_schema,'<<NULL>>')) );
@@ -990,9 +990,9 @@ CREATE TEMPORARY TABLE tmp_internal_prc_p_a_h_t_table_to_purge
 ) ON COMMIT DROP;
 
 
-	--
-	--  Check input parameters ... 
-	--
+    --
+    --  Check input parameters ... 
+    --
 
     IF ( p_history_table_schema IS NOT NULL 
        AND RIGHT(p_history_table_schema,char_length(v_history_schema_suffix)) IS DISTINCT FROM v_history_schema_suffix ) 
@@ -1004,28 +1004,28 @@ CREATE TEMPORARY TABLE tmp_internal_prc_p_a_h_t_table_to_purge
     END IF;
 
     IF ( p_days_back_to_keep IS NOT NULL AND p_days_back_to_keep < 0 ) THEN 
-	
+    
       v_raise_message := utility.fcn_console_message('Input parameter "p_days_back_to_keep" must be either NULL or non-negative.');
       RAISE NOTICE '%' , v_raise_message; 
-	  
+      
       v_raise_message := 'If a non-null value is provided for input parameter "p_days_back_to_keep" then it should be non-negative.';
       RAISE EXCEPTION '%' , v_raise_message; 
-	  
+      
     END IF;
 
-	--
-	--  Validate request ... 
-	--
+    --
+    --  Validate request ... 
+    --
 
     v_raise_message := utility.fcn_console_message('Gather list of tables to purge.');
     RAISE NOTICE '%' , v_raise_message;
-	
+    
     INSERT INTO tmp_internal_prc_p_a_h_t_table_to_purge 
     ( 
       history_table_schema 
     , history_table_name 
     ) 
-	
+    
       SELECT  H.table_schema 
       ,       H.table_name 
       -- 
@@ -1046,26 +1046,26 @@ CREATE TEMPORARY TABLE tmp_internal_prc_p_a_h_t_table_to_purge
       ,         H.table_name    
       -- 
       ;  
-	  
+      
     GET DIAGNOSTICS v_row_count = ROW_COUNT;
     v_raise_message := utility.fcn_console_message(' rows affected = ' || format('%s',coalesce(v_row_count::text,'<<NULL>>')) );
     RAISE NOTICE '%' , v_raise_message;
 
 
-	v_loop_total_history_table_count := v_row_count; 
-	
+    v_loop_total_history_table_count := v_row_count; 
+    
     IF v_loop_total_history_table_count IS NULL 
     OR v_loop_total_history_table_count = 0 
     THEN 
-	
+    
       v_raise_message := 'No eligible tables were identified for purging.';
       RAISE EXCEPTION '%' , v_raise_message;
-	  
+      
     END IF; 
 
-	--
-	--  Perform request ... 
-	--
+    --
+    --  Perform request ... 
+    --
 
     v_raise_message := utility.fcn_console_message('Loop through tables in list...');
     RAISE NOTICE '%' , v_raise_message;
@@ -1073,7 +1073,7 @@ CREATE TEMPORARY TABLE tmp_internal_prc_p_a_h_t_table_to_purge
     WHILE ( v_loop_current_iteration <= v_loop_total_history_table_count ) 
     LOOP 
     --
-	
+    
         SELECT  X.history_table_schema 
         ,       X.history_table_name 
         -- 
@@ -1103,15 +1103,15 @@ CREATE TEMPORARY TABLE tmp_internal_prc_p_a_h_t_table_to_purge
 
     v_raise_message := utility.fcn_console_message('Loop finished.');
     RAISE NOTICE '%' , v_raise_message;
-	
-	
+    
+    
         v_raise_message := utility.fcn_console_message('Procedure completed successfully.');
         RAISE NOTICE '%' , v_raise_message;
 
-	
+    
     v_raise_message := utility.fcn_console_message('END :: utility.prc_purge_all_history_tables');
     RAISE NOTICE '%' , v_raise_message;
-	
+    
 --
 --
 END main_block;
