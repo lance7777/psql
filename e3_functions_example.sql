@@ -65,7 +65,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA reference_exec GRANT EXECUTE ON FUNCTIONS TO 
 
 /***********************************************
 
-    FUNCTION: reference_exec.fcn_generate_calendar_date 
+    FUNCTION:  reference_exec.fcn_generate_calendar_date 
 
     PARAMETER(S):  p_start_date  date  REQUIRED 
                    p_end_date    date  REQUIRED 
@@ -91,7 +91,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA reference_exec GRANT EXECUTE ON FUNCTIONS TO 
      --
      ORDER BY  X.date_value  ASC 
      -- 
-     ; 	
+     ;     
 
 
     HISTORY: 
@@ -168,7 +168,7 @@ $main_def$ LANGUAGE sql
 --
 --
 --
---	
+--    
 
 --
 --
@@ -224,10 +224,10 @@ DECLARE
   --
   --
 BEGIN 
-	
+    
     v_raise_message := utility.fcn_console_message('START :: reference_exec.prc_populate_calendar_date'); 
     RAISE NOTICE '%' , v_raise_message; 
-	
+    
 --
 --
 
@@ -286,7 +286,7 @@ BEGIN
       , days_after_sunday 
       --
       )
-	  
+      
         SELECT  X.date_value 
         --
         ,   X.year_number 
@@ -306,14 +306,14 @@ BEGIN
         ORDER BY  X.date_value 
         --
         ;
-		
+        
 --
 --
-	  
+      
     GET DIAGNOSTICS v_row_count = ROW_COUNT; 
     v_raise_message := utility.fcn_console_message(' rows affected = ' || format('%s',coalesce(v_row_count::text,'<<NULL>>')) ); 
     RAISE NOTICE '%' , v_raise_message; 
-	
+    
 --
 --
 
@@ -327,10 +327,10 @@ BEGIN
       RAISE EXCEPTION '%' , v_raise_message; 
       
     END IF; 
-	
+    
 --
 --
-	
+    
     IF EXISTS ( SELECT  null 
                 FROM  tmp_internal_prc_p_c_d_staged_insert  AS  X 
                 JOIN  reference.calendar_date  AS  E  ON  X.date_value = E.date_value 
@@ -349,13 +349,13 @@ BEGIN
         RAISE EXCEPTION '%' , v_raise_message; 
   
     END IF; 
-	
+    
 --
 --
-	
+    
     v_raise_message := utility.fcn_console_message('Insert new records into "reference"."calendar_date":');  
     RAISE NOTICE '%' , v_raise_message; 
-	
+    
       INSERT INTO reference.calendar_date 
       (
         date_value 
@@ -369,7 +369,7 @@ BEGIN
       , days_after_sunday 
       --
       )  
-	
+    
         SELECT  N.date_value 
         --
         ,       N.year_number 
@@ -393,18 +393,18 @@ BEGIN
     GET DIAGNOSTICS v_row_count = ROW_COUNT; 
     v_raise_message := utility.fcn_console_message(' rows affected = ' || format('%s',coalesce(v_row_count::text,'<<NULL>>')) );  
     RAISE NOTICE '%' , v_raise_message; 
-	
+    
 -- 
 -- 
 
     DROP TABLE tmp_internal_prc_p_c_d_staged_insert; 
-	
+    
 --
 --
 
     v_raise_message := utility.fcn_console_message('END :: reference_exec.prc_populate_calendar_date');  
     RAISE NOTICE '%' , v_raise_message; 
-	
+    
 -- 
 -- 
 END main_block;
@@ -415,7 +415,7 @@ $main_def$ LANGUAGE plpgsql
 --
 --
 --
---	
+--    
 
 --
 --
