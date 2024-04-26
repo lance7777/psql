@@ -252,7 +252,7 @@ VALUES
        , short_description 
        , is_active ) 
 -- 
-JOIN  metric.domain_class  AS  C  ON  X.domain_class_code_name = C.code_name 	   
+JOIN  metric.domain_class  AS  C  ON  X.domain_class_code_name = C.code_name        
 --
 ; 
 
